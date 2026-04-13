@@ -45,7 +45,7 @@ function App() {
     setUser(null);
   };
 
-  /* 📅 WEEK (MONDAY START) */
+  /* WEEK (MONDAY START) */
   const getWeek = (dateStr) => {
     const base = new Date(dateStr);
     const day = base.getDay();
@@ -70,7 +70,7 @@ function App() {
     setData(updated);
   };
 
-  /* 👩‍❤️‍👨 OTHER USER */
+  /* OTHER USER */
   const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
 
   const getOtherData = () => {
@@ -78,7 +78,7 @@ function App() {
     return saved ? JSON.parse(saved) : {};
   };
 
-  /* 📊 DASHBOARD */
+  /* DASHBOARD */
   const getWeeks = () => {
     let current = new Date("2026-04-13");
     const weeks = [];
@@ -173,7 +173,7 @@ function App() {
 
       <Navbar />
 
-      {/* 🏆 DASHBOARD */}
+      {/* DASHBOARD */}
       {page === "dashboard" && (
         <div className="measure-table-container">
           <h2>🏆 Weekly Competition</h2>
@@ -223,7 +223,7 @@ function App() {
         </div>
       )}
 
-      {/* 🧠 HABIT TRACKER */}
+      {/* HABIT TRACKER */}
       {page === "habit" && (
         <div className="dashboard">
 
@@ -232,6 +232,21 @@ function App() {
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
+
+          {/* DATE HEADER */}
+          <div className="habit-row">
+            <span></span>
+            <div className="week-boxes">
+              {thisWeek.map((d, i) => (
+                <div key={i} className="date-label">
+                  {new Date(d).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit"
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
 
           {habitsList.map((habit, i) => (
             <div key={i} className="habit-row">
@@ -281,7 +296,7 @@ function App() {
         </div>
       )}
 
-      {/* 📏 MEASUREMENTS */}
+      {/* MEASUREMENTS */}
       {page === "measurements" && (
         <Measurements user={user} />
       )}
@@ -291,7 +306,7 @@ function App() {
         <div className="popup-overlay">
           <div className="popup">
             <h2>🏆 {popup.winner} Wins!</h2>
-            <div className="wheel">🎡</div>
+            <div className="wheel"></div>
             <p className="loser">😈 {popup.loser} must:</p>
             <h3>{popup.punishment}</h3>
             <button onClick={() => setPopup(null)}>Close</button>

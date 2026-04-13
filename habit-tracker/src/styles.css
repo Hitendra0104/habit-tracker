@@ -329,3 +329,61 @@ body {
   color: red;
   font-weight: bold;
 }
+
+.date-label {
+  width: 35px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.day-box {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* WINNER */
+.winner-row {
+  background: #dcfce7;
+  font-weight: bold;
+}
+
+/* POPUP */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.wheel {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 20px auto;
+  background: conic-gradient(#2563eb, #22c55e, #f59e0b, #ef4444);
+  animation: spin 1.2s ease;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(720deg); }
+}
+
+.loser {
+  color: red;
+  font-weight: bold;
+}
