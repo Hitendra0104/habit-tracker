@@ -15,7 +15,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [popup, setPopup] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [data, setData] = useState({});
 
   /* LOAD USER */
