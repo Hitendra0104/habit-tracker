@@ -1,35 +1,83 @@
 import React, { useEffect, useState } from "react";
+import habitsList from "./data/habits.json";
 import Login from "./Login";
+import Measurements from "./Measurements";
 import "./styles.css";
 
 /* 🎯 PUNISHMENTS */
 const punishments = {
   easy: ["20 jumping jacks", "10 pushups", "5 min walk"],
   medium: ["50 burpees", "100 jumping jacks", "3 min plank"],
-  hard: [
-    "Cook dinner 🍳",
-    "No sugar for 2 days",
-    "Wake up at 5 AM ⏰",
-    "Do all chores 🧹"
-  ]
+  hard: ["Cook dinner 🍳", "No sugar for 2 days", "Wake up at 5 AM ⏰"]
 };
 
 function App() {
   const [user, setUser] = useState(null);
+  const [page, setPage] = useState("dashboard");
   const [popup, setPopup] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [data, setData] = useState({});
 
-  // LOAD USER
+  /* LOAD USER */
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) setUser(savedUser);
+    const saved = localStorage.getItem("user");
+    if (saved) setUser(saved);
   }, []);
+
+  /* LOAD DATA */
+  useEffect(() => {
+    if (!user) return;
+    const saved = localStorage.getItem(`habits_${user}`);
+    setData(saved ? JSON.parse(saved) : {});
+  }, [user]);
+
+  /* SAVE DATA */
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(`habits_${user}`, JSON.stringify(data));
+    }
+  }, [data, user]);
 
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
   };
 
-  /* 📅 WEEK GENERATION */
+  /* WEEK */
+  const getWeek = (dateStr) => {
+    const base = new Date(dateStr);
+    const day = base.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+
+    const monday = new Date(base);
+    monday.setDate(base.getDate() + diff);
+
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      return d.toISOString().split("T")[0];
+    });
+  };
+
+  const thisWeek = getWeek(selectedDate);
+
+  /* HABIT TOGGLE */
+  const toggleHabit = (habit, date) => {
+    const updated = { ...data };
+    if (!updated[date]) updated[date] = {};
+    updated[date][habit] = !updated[date]?.[habit];
+    setData(updated);
+  };
+
+  /* OTHER USER */
+  const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
+
+  const getOtherData = () => {
+    const saved = localStorage.getItem(`habits_${otherUser}`);
+    return saved ? JSON.parse(saved) : {};
+  };
+
+  /* DASHBOARD */
   const getWeeks = () => {
     let current = new Date("2026-04-13");
     const weeks = [];
@@ -40,9 +88,7 @@ function App() {
       end.setDate(start.getDate() + 6);
 
       const format = (d) =>
-        `${String(d.getDate()).padStart(2, "0")}/${String(
-          d.getMonth() + 1
-        ).padStart(2, "0")}`;
+        `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
 
       weeks.push({
         sr: i + 1,
@@ -58,12 +104,6 @@ function App() {
 
   const weeks = getWeeks();
 
-  const getUserData = (name) => {
-    const saved = localStorage.getItem(`habits_${name}`);
-    return saved ? JSON.parse(saved) : {};
-  };
-
-  /* 📊 SCORE */
   const calculateScore = (userData, weekKey) => {
     let total = 0;
 
@@ -82,34 +122,24 @@ function App() {
     return total;
   };
 
-  /* 🏆 WINNER */
-  const getWinner = (h, r) => {
-    if (h === r) return "Radhika";
-    return h > r ? "Hitendra" : "Radhika";
-  };
+  const getWinner = (h, r) => (h === r ? "Radhika" : h > r ? "Hitendra" : "Radhika");
 
-  /* 🎯 DIFFICULTY */
   const getDifficulty = (diff) => {
     if (diff <= 5) return "easy";
     if (diff <= 15) return "medium";
     return "hard";
   };
 
-  /* 🎡 PUNISHMENT */
   const getPunishment = (weekKey, loser, diff) => {
     const key = `punishment_${weekKey}`;
     const saved = localStorage.getItem(key);
-
     if (saved) return saved;
 
     const level = getDifficulty(diff);
     const list = punishments[level];
-
-    const random =
-      list[Math.floor(Math.random() * list.length)];
+    const random = list[Math.floor(Math.random() * list.length)];
 
     const final = `${loser}: ${random}`;
-
     localStorage.setItem(key, final);
     return final;
   };
@@ -118,13 +148,13 @@ function App() {
   const Navbar = () => (
     <div className="navbar">
       <div className="nav-left">
-        <button>Dashboard</button>
+        <button onClick={() => setPage("dashboard")}>Dashboard</button>
       </div>
       <div className="nav-mid1">
-        <button>Habit Tracker</button>
+        <button onClick={() => setPage("habit")}>Habit Tracker</button>
       </div>
       <div className="nav-mid2">
-        <button>Measurements</button>
+        <button onClick={() => setPage("measurements")}>Measurements</button>
       </div>
       <div className="nav-right">
         <button onClick={logout}>Logout</button>
@@ -140,81 +170,99 @@ function App() {
       <Navbar />
 
       {/* DASHBOARD */}
-      <div className="measure-table-container">
-        <h2>🏆 Weekly Competition</h2>
+      {page === "dashboard" && (
+        <div className="measure-table-container">
+          <h2>🏆 Weekly Competition</h2>
 
-        <table className="measure-table">
-          <thead>
-            <tr>
-              <th>Sr</th>
-              <th>Week</th>
-              <th>Hitendra</th>
-              <th>Radhika</th>
-              <th>Winner</th>
-              <th>Punishment</th>
-            </tr>
-          </thead>
+          <table className="measure-table">
+            <thead>
+              <tr>
+                <th>Sr</th>
+                <th>Week</th>
+                <th>Hitendra</th>
+                <th>Radhika</th>
+                <th>Winner</th>
+                <th>Punishment</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {weeks.map((w) => {
-              const hData = getUserData("Hitendra");
-              const rData = getUserData("Radhika");
+            <tbody>
+              {weeks.map((w) => {
+                const hScore = calculateScore(getOtherData(), w.key);
+                const rScore = calculateScore(data, w.key);
 
-              const hScore = calculateScore(hData, w.key);
-              const rScore = calculateScore(rData, w.key);
+                const winner = getWinner(hScore, rScore);
+                const loser = winner === "Hitendra" ? "Radhika" : "Hitendra";
+                const diff = Math.abs(hScore - rScore);
 
-              const winner = getWinner(hScore, rScore);
-              const loser =
-                winner === "Hitendra" ? "Radhika" : "Hitendra";
+                const punishment = getPunishment(w.key, loser, diff);
 
-              const diff = Math.abs(hScore - rScore);
+                return (
+                  <tr
+                    key={w.key}
+                    className={winner === user ? "winner-row" : ""}
+                    onClick={() =>
+                      setPopup({ winner, loser, punishment })
+                    }
+                  >
+                    <td>{w.sr}</td>
+                    <td>{w.label}</td>
+                    <td>{hScore}</td>
+                    <td>{rScore}</td>
+                    <td>{winner}</td>
+                    <td>{punishment}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-              const punishment = getPunishment(
-                w.key,
-                loser,
-                diff
-              );
+      {/* HABIT TRACKER */}
+      {page === "habit" && (
+        <div className="dashboard">
+          <div className="main">
+            <div className="left">
+              {habitsList.map((habit, i) => (
+                <div key={i} className="habit-row">
+                  <span>{habit.name}</span>
+                  <div className="week-boxes">
+                    {thisWeek.map((d, j) => (
+                      <div
+                        key={j}
+                        className="day-box"
+                        style={{
+                          background:
+                            data[d]?.[habit.name]
+                              ? habit.color
+                              : "#e5e7eb"
+                        }}
+                        onClick={() => toggleHabit(habit.name, d)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
-              return (
-                <tr
-                  key={w.key}
-                  className={winner === user ? "winner-row" : ""}
-                  onClick={() =>
-                    setPopup({ winner, loser, punishment })
-                  }
-                >
-                  <td>{w.sr}</td>
-                  <td>{w.label}</td>
-                  <td>{hScore}</td>
-                  <td>{rScore}</td>
-                  <td>{winner}</td>
-                  <td>{punishment}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {/* MEASUREMENTS */}
+      {page === "measurements" && (
+        <Measurements user={user} />
+      )}
 
-      {/* 🎡 POPUP */}
+      {/* POPUP */}
       {popup && (
         <div className="popup-overlay">
           <div className="popup">
-
             <h2>🏆 {popup.winner} Wins!</h2>
-
             <div className="wheel">🎡</div>
-
-            <p className="loser">
-              😈 {popup.loser} must:
-            </p>
-
+            <p className="loser">😈 {popup.loser} must:</p>
             <h3>{popup.punishment}</h3>
-
-            <button onClick={() => setPopup(null)}>
-              Close
-            </button>
-
+            <button onClick={() => setPopup(null)}>Close</button>
           </div>
         </div>
       )}
