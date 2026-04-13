@@ -1,0 +1,286 @@
+/* ================= GLOBAL ================= */
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  }
+  
+  .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* ================= NAVBAR ================= */
+  .navbar {
+    display: flex;
+    width: 100%;
+    height: 55px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  /* 30% / 30% / 30% / 10% */
+  .nav-left,
+  .nav-mid1,
+  .nav-mid2 {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .nav-right {
+    width: 10%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 15px;
+  }
+  
+  .navbar button {
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 12px;
+  }
+  
+  .navbar button:hover {
+    background: #f3f4f6;
+    border-radius: 6px;
+  }
+  
+  .nav-right button {
+    color: #ef4444;
+    font-weight: 500;
+  }
+  
+  /* ================= DASHBOARD TABLE ================= */
+  .measure-table-container {
+    width: 95%;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    overflow-x: auto;
+  }
+  
+  .measure-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .measure-table th {
+    background: #f3f4f6;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .measure-table td {
+    border: 1px solid #eee;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  /* ================= HABIT TRACKER ================= */
+  .dashboard {
+    background: #f9fafb;
+    border-radius: 20px;
+    width: 1100px;
+    padding: 30px;
+    margin-top: 20px;
+  }
+  
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* DATE NAV */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .date-nav button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #e5e7eb;
+  }
+  
+  .date-nav button:hover {
+    background: #d1d5db;
+  }
+  
+  /* MAIN */
+  .main {
+    display: flex;
+    margin-top: 20px;
+    gap: 20px;
+  }
+  
+  /* LEFT */
+  .left {
+    flex: 2;
+  }
+  
+  .habit-row {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  .habit-row span {
+    width: 180px;
+  }
+  
+  /* DATE HEADER */
+  .date-label {
+    width: 35px;
+    font-size: 12px;
+    text-align: center;
+    color: gray;
+  }
+  
+  /* WEEK BOXES */
+  .week-boxes {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .day-box {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .day-box:hover {
+    transform: scale(1.1);
+  }
+  
+  /* RIGHT */
+  .right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .habit-card {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    transition: transform 0.2s;
+  }
+  
+  .habit-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .active-card {
+    background: #f3f4f6;
+  }
+  
+  .done {
+    color: green;
+    font-weight: bold;
+  }
+  
+  /* ================= OTHER USER ================= */
+  .other-section {
+    margin-top: 25px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+  }
+  
+  .other-section h3 {
+    margin-bottom: 10px;
+  }
+  
+  .other-section .score {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* ================= MEASUREMENTS TABLE ================= */
+  .table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 10px;
+  }
+  
+  /* STICKY HEADER */
+  .measure-table thead th {
+    position: sticky;
+    top: 0;
+    background: #f3f4f6;
+    z-index: 2;
+  }
+  
+  /* TARGET ROW */
+  .target-row {
+    position: sticky;
+    top: 45px;
+    background: #e0f2fe;
+    z-index: 1;
+    font-weight: bold;
+  }
+  
+  /* INPUT */
+  .measure-table input {
+    width: 60px;
+    padding: 4px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* SR COLUMN */
+  .measure-table td:first-child,
+  .measure-table th:first-child {
+    font-weight: bold;
+    width: 40px;
+  }
+  
+  /* WEEK COLUMN */
+  .week-label {
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 500;
+  }
+  
+  /* ================= BUTTON GLOBAL ================= */
+  button {
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  @media (max-width: 900px) {
+    .dashboard {
+      width: 95%;
+    }
+  
+    .main {
+      flex-direction: column;
+    }
+  
+    .week-boxes {
+      gap: 10px;
+    }
+  
+    .day-box {
+      width: 25px;
+      height: 25px;
+    }
+  }
