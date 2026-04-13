@@ -17,6 +17,8 @@ const punishments = [
 ];
 
 function App() {
+  const [hitendraData, setHitendraData] = useState({});
+  const [radhikaData, setRadhikaData] = useState({});
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [popup, setPopup] = useState(null);
@@ -27,6 +29,22 @@ function App() {
   const [data, setData] = useState({});
   const [otherData, setOtherData] = useState({});
 
+  /* Firestore sync for both users (initial load) */
+  useEffect(() => {
+    const unsub1 = onSnapshot(doc(db, "habits", "Hitendra"), (snap) => {
+      setHitendraData(snap.exists() ? snap.data() : {});
+    });
+  
+    const unsub2 = onSnapshot(doc(db, "habits", "Radhika"), (snap) => {
+      setRadhikaData(snap.exists() ? snap.data() : {});
+    });
+  
+    return () => {
+      unsub1();
+      unsub2();
+    };
+  }, []);
+  
   /* LOAD USER */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -240,8 +258,8 @@ return (
           </thead>
           <tbody>
             {weeks.map((w) => {
-              const hScore = calculateScore(otherData, w.key);
-              const rScore = calculateScore(data, w.key);
+              const hScore = calculateScore(hitendraData, w.key);
+              const rScore = calculateScore(radhikaData, w.key);
 
               const winner = getWinner(hScore, rScore);
               const punishment = getPunishment(w.key);
