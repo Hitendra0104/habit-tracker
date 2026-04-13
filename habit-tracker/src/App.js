@@ -32,6 +32,10 @@ function App() {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(savedUser);
   }, []);
+  useEffect(() => {
+    setData({});
+    setOtherData({});
+  }, [user]);
 
   /* ✅ REAL-TIME SYNC (CURRENT USER) */
   useEffect(() => {
@@ -70,7 +74,7 @@ function App() {
     if (!user) return;
 
     const saveData = async () => {
-      await setDoc(doc(db, "habits", user), data);
+      await setDoc(doc(db, "habits", user), data, { merge: true });
     };
 
     saveData();
