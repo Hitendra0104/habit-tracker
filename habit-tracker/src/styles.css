@@ -387,3 +387,45 @@ body {
   color: red;
   font-weight: bold;
 }
+.winner-row {
+  background: #dcfce7;
+  font-weight: bold;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.wheel {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 20px auto;
+  background: conic-gradient(#2563eb, #22c55e, #f59e0b, #ef4444);
+  animation: spin 1.5s linear;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(720deg); }
+}
+
+.spinning {
+  font-weight: bold;
+  color: #2563eb;
+}
