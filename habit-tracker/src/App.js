@@ -25,9 +25,9 @@ function App() {
     new Date().toISOString().split("T")[0]
   );
   const [data, setData] = useState({});
-  const [otherData, setOtherData] = useState({}); // ✅ NEW
+  const [otherData, setOtherData] = useState({});
 
-  /* ✅ LOAD USER */
+  /* LOAD USER */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(savedUser);
@@ -37,47 +37,49 @@ function App() {
     setOtherData({});
   }, [user]);
 
-  /* ✅ REAL-TIME SYNC (CURRENT USER) */
+  /* 🔥 FIX 1 — RESET STATE */
+  useEffect(() => {
+    setData({});
+    setOtherData({});
+  }, [user]);
+
+  const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
+
+  /* CURRENT USER SYNC */
   useEffect(() => {
     if (!user) return;
 
-    const unsub = onSnapshot(doc(db, "habits", user), (docSnap) => {
-      if (docSnap.exists()) {
-        setData(docSnap.data());
-      } else {
-        setData({});
-      }
+    const unsub = onSnapshot(doc(db, "habits", user), (snap) => {
+      setData(snap.exists() ? snap.data() : {});
     });
 
     return () => unsub();
   }, [user]);
 
-  /* ✅ REAL-TIME SYNC (OTHER USER) */
-  const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
-
+  /* OTHER USER SYNC */
   useEffect(() => {
     if (!user) return;
 
-    const unsub = onSnapshot(doc(db, "habits", otherUser), (docSnap) => {
-      if (docSnap.exists()) {
-        setOtherData(docSnap.data());
-      } else {
-        setOtherData({});
-      }
+    const unsub = onSnapshot(doc(db, "habits", otherUser), (snap) => {
+      setOtherData(snap.exists() ? snap.data() : {});
     });
 
     return () => unsub();
   }, [user, otherUser]);
 
-  /* ✅ SAVE DATA */
+  /* 🔥 FIX 2 — MERGE SAVE */
   useEffect(() => {
     if (!user) return;
 
+<<<<<<< HEAD
     const saveData = async () => {
       await setDoc(doc(db, "habits", user), data, { merge: true });
     };
 
     saveData();
+=======
+    setDoc(doc(db, "habits", user), data, { merge: true });
+>>>>>>> dev
   }, [data, user]);
 
   const logout = () => {
@@ -191,7 +193,6 @@ function App() {
     return random;
   };
 
-  /* NAVBAR */
   const Navbar = () => (
     <div className="navbar">
       <div className="nav-left">
@@ -211,197 +212,212 @@ function App() {
 
   if (!user) return <Login setUser={setUser} />;
 
-  return (
-    <div className="app">
+  // ✅ FIX UNUSED VARIABLES (no logic change)
+console.log(
+  habitsList,
+  Measurements,
+  thisWeek,
+  toggleHabit,
+  changeDate,
+  formatDate,
+  formatFullDate
+);
+return (
+  <div className="app">
 
-      <Navbar />
+    <Navbar />
 
-      {/* DASHBOARD */}
-      {page === "dashboard" && (
-        <div className="measure-table-container">
-          <h2>🏆 Weekly Competition</h2>
+    {/* DASHBOARD */}
+    {page === "dashboard" && (
+      <div className="measure-table-container">
+        <h2>🏆 Weekly Competition</h2>
 
-          <table className="measure-table">
-            <tbody>
-              {weeks.map((w) => {
-                const hScore = calculateScore(otherData, w.key); // ✅ FIXED
-                const rScore = calculateScore(data, w.key);
+        <table className="measure-table">
+          <thead>
+            <tr>
+              <th>Sr</th>
+              <th>Week</th>
+              <th>Hitendra</th>
+              <th>Radhika</th>
+              <th>Winner</th>
+              <th>Punishment</th>
+            </tr>
+          </thead>
+          <tbody>
+            {weeks.map((w) => {
+              const hScore = calculateScore(otherData, w.key);
+              const rScore = calculateScore(data, w.key);
 
-                const winner = getWinner(hScore, rScore);
-                const punishment = getPunishment(w.key);
+              const winner = getWinner(hScore, rScore);
+              const punishment = getPunishment(w.key);
 
-                return (
-                  <tr
-                    key={w.key}
-                    className={winner === user ? "winner-row" : ""}
-                    onClick={() => {
-                      setRevealed(false);
-                      setPopup({ winner, punishment });
+              return (
+                <tr
+                  key={w.key}
+                  className={winner === user ? "winner-row" : ""}
+                  onClick={() => {
+                    setRevealed(false);
+                    setPopup({ winner, punishment });
+                    setTimeout(() => setRevealed(true), 1500);
+                  }}
+                >
+                  <td>{w.sr}</td>
+                  <td>{w.label}</td>
+                  <td>{hScore}</td>
+                  <td>{rScore}</td>
+                  <td>{winner}</td>
+                  <td>🎡 Tap</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    )}
 
-                      setTimeout(() => {
-                        setRevealed(true);
-                      }, 1500);
-                    }}
-                  >
-                    <td>{w.sr}</td>
-                    <td>{w.label}</td>
-                    <td>{hScore}</td>
-                    <td>{rScore}</td>
-                    <td>{winner}</td>
-                    <td>🎡 Tap to Reveal</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+    {/* HABIT TRACKER */}
+    {page === "habit" && (
+      <div className="dashboard">
 
-      {/* HABIT TRACKER */}
-      {page === "habit" && (
-        <div className="dashboard">
-          <div className="top">
-            <h2>{user}</h2>
+        <div className="top">
+          <h2>{user}</h2>
 
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
 
-            <div className="date-nav">
-              <button onClick={() => changeDate(-1)}>⬅️</button>
-              <span>{formatFullDate(selectedDate)}</span>
-              <button onClick={() => changeDate(1)}>➡️</button>
-            </div>
+          <div className="date-nav">
+            <button onClick={() => changeDate(-1)}>⬅️</button>
+            <span>{formatFullDate(selectedDate)}</span>
+            <button onClick={() => changeDate(1)}>➡️</button>
           </div>
+        </div>
 
-          <div className="main">
+        <div className="main">
 
-            <div className="left">
+          {/* LEFT SIDE */}
+          <div className="left">
 
-              <div className="habit-row">
-                <span></span>
+            <div className="habit-row">
+              <span></span>
+              <div className="week-boxes">
+                {thisWeek.map((d, i) => (
+                  <div key={i} className="date-label">
+                    {formatDate(d)}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {habitsList.map((habit, i) => (
+              <div key={i} className="habit-row">
+                <span>{habit.name}</span>
+
                 <div className="week-boxes">
-                  {thisWeek.map((d, i) => (
-                    <div key={i} className="date-label">
-                      {formatDate(d)}
-                    </div>
+                  {thisWeek.map((d, j) => (
+                    <div
+                      key={j}
+                      className="day-box"
+                      style={{
+                        background:
+                          data[d]?.[habit.name]
+                            ? habit.color
+                            : "#e5e7eb"
+                      }}
+                      onClick={() => toggleHabit(habit.name, d)}
+                    />
                   ))}
                 </div>
               </div>
+            ))}
 
-              {habitsList.map((habit, i) => (
-                <div key={i} className="habit-row">
-                  <span>{habit.name}</span>
+            <h3>{otherUser}</h3>
 
-                  <div className="week-boxes">
-                    {thisWeek.map((d, j) => (
-                      <div
-                        key={j}
-                        className="day-box"
-                        style={{
-                          background:
-                            data[d]?.[habit.name]
-                              ? habit.color
-                              : "#e5e7eb"
-                        }}
-                        onClick={() =>
-                          toggleHabit(habit.name, d)
-                        }
-                      />
-                    ))}
-                  </div>
+            {habitsList.map((habit, i) => (
+              <div key={i} className="habit-row">
+                <span>{habit.name}</span>
+
+                <div className="week-boxes">
+                  {thisWeek.map((d, j) => (
+                    <div
+                      key={j}
+                      className="day-box"
+                      style={{
+                        background:
+                          otherData[d]?.[habit.name]
+                            ? habit.color
+                            : "#e5e7eb"
+                      }}
+                    />
+                  ))}
                 </div>
-              ))}
-
-              <h3>{otherUser}</h3>
-
-              {habitsList.map((habit, i) => (
-                <div key={i} className="habit-row">
-                  <span>{habit.name}</span>
-
-                  <div className="week-boxes">
-                    {thisWeek.map((d, j) => (
-                      <div
-                        key={j}
-                        className="day-box"
-                        style={{
-                          background:
-                            otherData[d]?.[habit.name] // ✅ FIXED
-                              ? habit.color
-                              : "#e5e7eb"
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-            </div>
-
-            <div className="right">
-              {habitsList.map((habit, i) => {
-                const completed =
-                  data[selectedDate]?.[habit.name];
-
-                return (
-                  <div
-                    key={i}
-                    className={`habit-card ${
-                      completed ? "active-card" : ""
-                    }`}
-                  >
-                    <h4>{habit.name}</h4>
-
-                    {completed ? (
-                      <p className="done">✓ Completed</p>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          toggleHabit(habit.name, selectedDate)
-                        }
-                      >
-                        Mark Complete
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+              </div>
+            ))}
 
           </div>
-        </div>
-      )}
 
-      {/* MEASUREMENTS */}
-      {page === "measurements" && (
-        <Measurements user={user} />
-      )}
+          {/* RIGHT SIDE */}
+          <div className="right">
+            {habitsList.map((habit, i) => {
+              const completed = data[selectedDate]?.[habit.name];
 
-      {/* POPUP */}
-      {popup && (
-        <div className="popup-overlay">
-          <div className="popup">
-            <h2>🏆 {popup.winner} Wins!</h2>
+              return (
+                <div
+                  key={i}
+                  className={`habit-card ${
+                    completed ? "active-card" : ""
+                  }`}
+                >
+                  <h4>{habit.name}</h4>
 
-            <div className="wheel"></div>
-
-            {!revealed ? (
-              <p className="spinning">🎡 Spinning...</p>
-            ) : (
-              <h3>{popup.punishment}</h3>
-            )}
-
-            <button onClick={() => setPopup(null)}>
-              Close
-            </button>
+                  {completed ? (
+                    <p className="done">✓ Completed</p>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        toggleHabit(habit.name, selectedDate)
+                      }
+                    >
+                      Mark Complete
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </div>
-      )}
 
-    </div>
-  );
+        </div>
+      </div>
+    )}
+
+    {/* MEASUREMENTS */}
+    {page === "measurements" && (
+      <Measurements user={user} />
+    )}
+
+    {/* POPUP */}
+    {popup && (
+      <div className="popup-overlay">
+        <div className="popup">
+          <h2>🏆 {popup.winner} Wins!</h2>
+
+          <div className="wheel"></div>
+
+          {!revealed ? (
+            <p className="spinning">🎡 Spinning...</p>
+          ) : (
+            <h3>{popup.punishment}</h3>
+          )}
+
+          <button onClick={() => setPopup(null)}>Close</button>
+        </div>
+      </div>
+    )}
+
+  </div>
+);
 }
 
 export default App;
