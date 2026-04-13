@@ -15,7 +15,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [popup, setPopup] = useState(null);
-  const [selectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [data, setData] = useState({});
 
   /* LOAD USER */
@@ -43,7 +45,7 @@ function App() {
     setUser(null);
   };
 
-  /* WEEK */
+  /* 📅 WEEK (MONDAY START) */
   const getWeek = (dateStr) => {
     const base = new Date(dateStr);
     const day = base.getDay();
@@ -61,7 +63,6 @@ function App() {
 
   const thisWeek = getWeek(selectedDate);
 
-  /* HABIT TOGGLE */
   const toggleHabit = (habit, date) => {
     const updated = { ...data };
     if (!updated[date]) updated[date] = {};
@@ -69,7 +70,7 @@ function App() {
     setData(updated);
   };
 
-  /* OTHER USER */
+  /* 👩‍❤️‍👨 OTHER USER */
   const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
 
   const getOtherData = () => {
@@ -77,7 +78,7 @@ function App() {
     return saved ? JSON.parse(saved) : {};
   };
 
-  /* DASHBOARD */
+  /* 📊 DASHBOARD */
   const getWeeks = () => {
     let current = new Date("2026-04-13");
     const weeks = [];
@@ -88,7 +89,9 @@ function App() {
       end.setDate(start.getDate() + 6);
 
       const format = (d) =>
-        `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`;
+        `${String(d.getDate()).padStart(2, "0")}/${String(
+          d.getMonth() + 1
+        ).padStart(2, "0")}`;
 
       weeks.push({
         sr: i + 1,
@@ -122,7 +125,8 @@ function App() {
     return total;
   };
 
-  const getWinner = (h, r) => (h === r ? "Radhika" : h > r ? "Hitendra" : "Radhika");
+  const getWinner = (h, r) =>
+    h === r ? "Radhika" : h > r ? "Hitendra" : "Radhika";
 
   const getDifficulty = (diff) => {
     if (diff <= 5) return "easy";
@@ -169,7 +173,7 @@ function App() {
 
       <Navbar />
 
-      {/* DASHBOARD */}
+      {/* 🏆 DASHBOARD */}
       {page === "dashboard" && (
         <div className="measure-table-container">
           <h2>🏆 Weekly Competition</h2>
@@ -219,42 +223,70 @@ function App() {
         </div>
       )}
 
-      {/* HABIT TRACKER */}
+      {/* 🧠 HABIT TRACKER */}
       {page === "habit" && (
         <div className="dashboard">
-          <div className="main">
-            <div className="left">
-              {habitsList.map((habit, i) => (
-                <div key={i} className="habit-row">
-                  <span>{habit.name}</span>
-                  <div className="week-boxes">
-                    {thisWeek.map((d, j) => (
-                      <div
-                        key={j}
-                        className="day-box"
-                        style={{
-                          background:
-                            data[d]?.[habit.name]
-                              ? habit.color
-                              : "#e5e7eb"
-                        }}
-                        onClick={() => toggleHabit(habit.name, d)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
+
+          {habitsList.map((habit, i) => (
+            <div key={i} className="habit-row">
+              <span>{habit.name}</span>
+
+              <div className="week-boxes">
+                {thisWeek.map((d, j) => (
+                  <div
+                    key={j}
+                    className="day-box"
+                    style={{
+                      background:
+                        data[d]?.[habit.name]
+                          ? habit.color
+                          : "#e5e7eb"
+                    }}
+                    onClick={() => toggleHabit(habit.name, d)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          ))}
+
+          <h3>{otherUser}</h3>
+
+          {habitsList.map((habit, i) => (
+            <div key={i} className="habit-row">
+              <span>{habit.name}</span>
+
+              <div className="week-boxes">
+                {thisWeek.map((d, j) => (
+                  <div
+                    key={j}
+                    className="day-box"
+                    style={{
+                      background:
+                        getOtherData()[d]?.[habit.name]
+                          ? habit.color
+                          : "#e5e7eb"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+
         </div>
       )}
 
-      {/* MEASUREMENTS */}
+      {/* 📏 MEASUREMENTS */}
       {page === "measurements" && (
         <Measurements user={user} />
       )}
 
-      {/* POPUP */}
+      {/* 🎡 POPUP */}
       {popup && (
         <div className="popup-overlay">
           <div className="popup">
