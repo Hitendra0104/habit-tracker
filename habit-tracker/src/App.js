@@ -3,6 +3,8 @@ import habitsList from "./data/habits.json";
 import Login from "./Login";
 import Measurements from "./Measurements";
 import "./styles.css";
+import { db } from "./firebase";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
 
 const punishments = [
   "50 burpees",
@@ -23,22 +25,55 @@ function App() {
     new Date().toISOString().split("T")[0]
   );
   const [data, setData] = useState({});
+  const [otherData, setOtherData] = useState({}); // ✅ NEW
 
+  /* ✅ LOAD USER */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(savedUser);
   }, []);
 
+  /* ✅ REAL-TIME SYNC (CURRENT USER) */
   useEffect(() => {
     if (!user) return;
-    const saved = localStorage.getItem(`habits_${user}`);
-    setData(saved ? JSON.parse(saved) : {});
+
+    const unsub = onSnapshot(doc(db, "habits", user), (docSnap) => {
+      if (docSnap.exists()) {
+        setData(docSnap.data());
+      } else {
+        setData({});
+      }
+    });
+
+    return () => unsub();
   }, [user]);
 
+  /* ✅ REAL-TIME SYNC (OTHER USER) */
+  const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
+
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(`habits_${user}`, JSON.stringify(data));
-    }
+    if (!user) return;
+
+    const unsub = onSnapshot(doc(db, "habits", otherUser), (docSnap) => {
+      if (docSnap.exists()) {
+        setOtherData(docSnap.data());
+      } else {
+        setOtherData({});
+      }
+    });
+
+    return () => unsub();
+  }, [user, otherUser]);
+
+  /* ✅ SAVE DATA */
+  useEffect(() => {
+    if (!user) return;
+
+    const saveData = async () => {
+      await setDoc(doc(db, "habits", user), data);
+    };
+
+    saveData();
   }, [data, user]);
 
   const logout = () => {
@@ -89,14 +124,6 @@ function App() {
       day: "numeric",
       month: "short"
     });
-
-  const otherUser =
-    user === "Radhika" ? "Hitendra" : "Radhika";
-
-  const getOtherData = () => {
-    const saved = localStorage.getItem(`habits_${otherUser}`);
-    return saved ? JSON.parse(saved) : {};
-  };
 
   /* DASHBOARD */
   const getWeeks = () => {
@@ -193,10 +220,7 @@ function App() {
           <table className="measure-table">
             <tbody>
               {weeks.map((w) => {
-                const hScore = calculateScore(
-                  getOtherData(),
-                  w.key
-                );
+                const hScore = calculateScore(otherData, w.key); // ✅ FIXED
                 const rScore = calculateScore(data, w.key);
 
                 const winner = getWinner(hScore, rScore);
@@ -230,130 +254,122 @@ function App() {
       )}
 
       {/* HABIT TRACKER */}
-{page === "habit" && (
-  <div className="dashboard">
+      {page === "habit" && (
+        <div className="dashboard">
+          <div className="top">
+            <h2>{user}</h2>
 
-    {/* TOP BAR */}
-    <div className="top">
-      <h2>{user}</h2>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
 
-      {/* 📅 DATE PICKER ADDED */}
-      <input
-        type="date"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-      />
+            <div className="date-nav">
+              <button onClick={() => changeDate(-1)}>⬅️</button>
+              <span>{formatFullDate(selectedDate)}</span>
+              <button onClick={() => changeDate(1)}>➡️</button>
+            </div>
+          </div>
 
-      <div className="date-nav">
-        <button onClick={() => changeDate(-1)}>⬅️</button>
-        <span>{formatFullDate(selectedDate)}</span>
-        <button onClick={() => changeDate(1)}>➡️</button>
-      </div>
-    </div>
+          <div className="main">
 
-    <div className="main">
+            <div className="left">
 
-      {/* LEFT SECTION */}
-      <div className="left">
-
-        {/* DATE HEADER */}
-        <div className="habit-row">
-          <span></span>
-          <div className="week-boxes">
-            {thisWeek.map((d, i) => (
-              <div key={i} className="date-label">
-                {formatDate(d)}
+              <div className="habit-row">
+                <span></span>
+                <div className="week-boxes">
+                  {thisWeek.map((d, i) => (
+                    <div key={i} className="date-label">
+                      {formatDate(d)}
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+
+              {habitsList.map((habit, i) => (
+                <div key={i} className="habit-row">
+                  <span>{habit.name}</span>
+
+                  <div className="week-boxes">
+                    {thisWeek.map((d, j) => (
+                      <div
+                        key={j}
+                        className="day-box"
+                        style={{
+                          background:
+                            data[d]?.[habit.name]
+                              ? habit.color
+                              : "#e5e7eb"
+                        }}
+                        onClick={() =>
+                          toggleHabit(habit.name, d)
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <h3>{otherUser}</h3>
+
+              {habitsList.map((habit, i) => (
+                <div key={i} className="habit-row">
+                  <span>{habit.name}</span>
+
+                  <div className="week-boxes">
+                    {thisWeek.map((d, j) => (
+                      <div
+                        key={j}
+                        className="day-box"
+                        style={{
+                          background:
+                            otherData[d]?.[habit.name] // ✅ FIXED
+                              ? habit.color
+                              : "#e5e7eb"
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+            </div>
+
+            <div className="right">
+              {habitsList.map((habit, i) => {
+                const completed =
+                  data[selectedDate]?.[habit.name];
+
+                return (
+                  <div
+                    key={i}
+                    className={`habit-card ${
+                      completed ? "active-card" : ""
+                    }`}
+                  >
+                    <h4>{habit.name}</h4>
+
+                    {completed ? (
+                      <p className="done">✓ Completed</p>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          toggleHabit(habit.name, selectedDate)
+                        }
+                      >
+                        Mark Complete
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
           </div>
         </div>
+      )}
 
-        {habitsList.map((habit, i) => (
-          <div key={i} className="habit-row">
-            <span>{habit.name}</span>
-
-            <div className="week-boxes">
-              {thisWeek.map((d, j) => (
-                <div
-                  key={j}
-                  className="day-box"
-                  style={{
-                    background:
-                      data[d]?.[habit.name]
-                        ? habit.color
-                        : "#e5e7eb"
-                  }}
-                  onClick={() =>
-                    toggleHabit(habit.name, d)
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-
-        {/* OTHER USER */}
-        <h3>{otherUser}</h3>
-
-        {habitsList.map((habit, i) => (
-          <div key={i} className="habit-row">
-            <span>{habit.name}</span>
-
-            <div className="week-boxes">
-              {thisWeek.map((d, j) => (
-                <div
-                  key={j}
-                  className="day-box"
-                  style={{
-                    background:
-                      getOtherData()[d]?.[habit.name]
-                        ? habit.color
-                        : "#e5e7eb"
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-
-      </div>
-
-      {/* 👉 RIGHT SECTION (RESTORED) */}
-      <div className="right">
-
-        {habitsList.map((habit, i) => {
-          const completed =
-            data[selectedDate]?.[habit.name];
-
-          return (
-            <div
-              key={i}
-              className={`habit-card ${
-                completed ? "active-card" : ""
-              }`}
-            >
-              <h4>{habit.name}</h4>
-
-              {completed ? (
-                <p className="done">✓ Completed</p>
-              ) : (
-                <button
-                  onClick={() =>
-                    toggleHabit(habit.name, selectedDate)
-                  }
-                >
-                  Mark Complete
-                </button>
-              )}
-            </div>
-          );
-        })}
-
-      </div>
-
-    </div>
-  </div>
-)}
       {/* MEASUREMENTS */}
       {page === "measurements" && (
         <Measurements user={user} />
@@ -363,7 +379,6 @@ function App() {
       {popup && (
         <div className="popup-overlay">
           <div className="popup">
-
             <h2>🏆 {popup.winner} Wins!</h2>
 
             <div className="wheel"></div>
@@ -377,7 +392,6 @@ function App() {
             <button onClick={() => setPopup(null)}>
               Close
             </button>
-
           </div>
         </div>
       )}
