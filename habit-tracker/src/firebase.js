@@ -2,9 +2,9 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyDTY-SbffD9RammESLKZIglC_RT_ivKDcM",
+  authDomain: "habit-tracker-47b9f.firebaseapp.com",
+  projectId: "habit-tracker-47b9f",
 };
 
 const app = initializeApp(firebaseConfig);
