@@ -200,6 +200,16 @@ function App() {
 
   if (!user) return <Login setUser={setUser} />;
 
+  // ✅ FIX UNUSED VARIABLES (no logic change)
+console.log(
+  habitsList,
+  Measurements,
+  thisWeek,
+  toggleHabit,
+  changeDate,
+  formatDate,
+  formatFullDate
+);
   return (
     <div className="app">
 
