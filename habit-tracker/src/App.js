@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import habitsList from "./data/habits.json";
 import Login from "./Login";
-import Measurements from "./Measurements";
 import "./styles.css";
 
 /* 🎯 PUNISHMENTS */
@@ -56,32 +54,7 @@ function App() {
     });
   };
 
-  const thisWeek = getWeek(selectedDate);
-
-  const toggleHabit = (habit, date) => {
-    const updated = { ...data };
-    if (!updated[date]) updated[date] = {};
-    updated[date][habit] = !updated[date]?.[habit];
-    setData(updated);
-  };
-
-  const changeDate = (offset) => {
-    const d = new Date(selectedDate);
-    d.setDate(d.getDate() + offset);
-    setSelectedDate(d.toISOString().split("T")[0]);
-  };
-
-  const formatDate = (d) => {
-    const date = new Date(d);
-    return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}`;
-  };
-
-  const formatFullDate = (d) =>
-    new Date(d).toLocaleDateString("en-GB", {
-      weekday: "short",
-      day: "numeric",
-      month: "short"
-    });
+  
 
   const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
 
