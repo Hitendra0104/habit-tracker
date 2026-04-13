@@ -71,15 +71,7 @@ function App() {
   useEffect(() => {
     if (!user) return;
 
-<<<<<<< HEAD
-    const saveData = async () => {
-      await setDoc(doc(db, "habits", user), data, { merge: true });
-    };
-
-    saveData();
-=======
     setDoc(doc(db, "habits", user), data, { merge: true });
->>>>>>> dev
   }, [data, user]);
 
   const logout = () => {
@@ -213,7 +205,6 @@ function App() {
   if (!user) return <Login setUser={setUser} />;
 
 
-);
 
   // ✅ FIX UNUSED VARIABLES (no logic change)
   console.log(
