@@ -429,3 +429,9 @@ body {
   font-weight: bold;
   color: #2563eb;
 }
+
+.measure-table th {
+  background: #f3f4f6;
+  padding: 10px;
+  font-weight: bold;
+}
