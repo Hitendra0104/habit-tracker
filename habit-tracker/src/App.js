@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+
 import habitsList from "./data/habits.json";
 import Login from "./Login";
 import Measurements from "./Measurements";
 import "./styles.css";
 import { db } from "./firebase";
 import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState, useRef } from "react";
 
 const punishments = [
   "50 burpees",
@@ -26,12 +27,18 @@ function App() {
   );
   const [data, setData] = useState({});
   const [otherData, setOtherData] = useState({});
-
+  const [note, setNote] = useState("");
   /* LOAD USER */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(savedUser);
   }, []);
+  const dataRef = useRef(data);
+const dateRef = useRef(selectedDate);
+useEffect(() => {
+  dataRef.current = data;
+  dateRef.current = selectedDate;
+}, [data, selectedDate]);
 
   /* 🔥 FIX 1 — RESET STATE */
   useEffect(() => {
@@ -63,17 +70,58 @@ function App() {
     return () => unsub();
   }, [user, otherUser]);
 
+  useEffect(() => {
+    setNote("");
+  }, [selectedDate, data]);
+
   /* 🔥 FIX 2 — MERGE SAVE */
   useEffect(() => {
     if (!user) return;
 
     setDoc(doc(db, "habits", user), data, { merge: true });
   }, [data, user]);
+    
+
+useEffect(() => {
+  if (!note.trim()) return;
+
+  const timeout = setTimeout(() => {
+    const updated = { ...dataRef.current };
+    const selected = dateRef.current;
+
+    if (!updated[selected]) updated[selected] = {};
+
+    const now = new Date();
+    const timestamp = now.toLocaleString("en-IN", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    if (!updated[selected].notes) {
+      updated[selected].notes = [];
+    }
+
+    updated[selected].notes.push({
+      text: note,
+      time: timestamp
+    });
+
+    setData(updated);
+    setNote("");
+  }, 1000);
+
+  return () => clearTimeout(timeout);
+}, [note]);
 
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
   };
+  
+  
+    
 
   /* WEEK */
   const getWeek = (dateStr) => {
@@ -105,7 +153,6 @@ function App() {
     d.setDate(d.getDate() + offset);
     setSelectedDate(d.toISOString().split("T")[0]);
   };
-
   const formatDate = (d) =>
     new Date(d).toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -114,10 +161,33 @@ function App() {
 
   const formatFullDate = (d) =>
     new Date(d).toLocaleDateString("en-GB", {
-      weekday: "short",
       day: "numeric",
-      month: "short"
+      month: "long",
+      year: "numeric"
     });
+    
+    /*-dELETEING NOW AS NEW DATE IS ADDEDconst getMonthData = () => {
+      const days = [];
+      const today = new Date();
+    
+      const year = today.getFullYear();
+      const month = today.getMonth(); // 0-indexed
+    
+      // total days in month
+      const totalDays = new Date(year, month + 1, 0).getDate();
+    
+      for (let i = 1; i <= totalDays; i++) {
+        const d = new Date(year, month, i);
+        const key = d.toISOString().split("T")[0];
+    
+        days.push({
+          date: i,
+          done: !!data[key]
+        });
+      }
+    
+      return days;
+    };*/
 
   /* DASHBOARD */
   const getWeeks = () => {
@@ -199,6 +269,69 @@ function App() {
   );
 
   if (!user) return <Login setUser={setUser} />;
+
+  // 🔥 STREAK
+const calculateStreak = (habit) => {
+  let streak = 0;
+  let current = new Date();
+
+  while (true) {
+    const date = current.toISOString().split("T")[0];
+    if (data[date]?.[habit]) {
+      streak++;
+      current.setDate(current.getDate() - 1);
+    } else break;
+  }
+  return streak;
+};
+
+// 📅 CALENDAR
+const getMonthData = () => {
+  const days = [];
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 1; i <= totalDays; i++) {
+    const d = new Date(year, month, i);
+    const key = d.toISOString().split("T")[0];
+
+    days.push({
+      date: i,
+      done:
+        data[key] &&
+        habitsList.every(
+          (habit) => data[key]?.[habit.name] === true
+        )
+    });
+  }
+
+  return days;
+};
+
+// 📊 INSIGHTS
+const getInsights = () => {
+  let total = 0;
+  let completed = 0;
+
+  Object.values(data).forEach((day) => {
+    Object.entries(day || {}).forEach(([k, v]) => {
+      if (k !== "note") {
+        total++;
+        if (v) completed++;
+      }
+    });
+  });
+
+  return {
+    total,
+    completed,
+    percent: total ? Math.round((completed / total) * 100) : 0
+  };
+};
 
   // ✅ FIX UNUSED VARIABLES (no logic change)
 console.log(
@@ -301,7 +434,9 @@ return (
 
             {habitsList.map((habit, i) => (
               <div key={i} className="habit-row">
-                <span>{habit.name}</span>
+       <span>
+  {habit.name} {calculateStreak(habit.name) > 0 ? "🔥" : ""}
+</span>
 
                 <div className="week-boxes">
                   {thisWeek.map((d, j) => (
@@ -343,6 +478,62 @@ return (
                 </div>
               </div>
             ))}
+           <div className="note-box">
+  <h3>💬 Daily Notes</h3>
+
+  <textarea
+    value={note}
+    onChange={(e) => setNote(e.target.value)}
+    placeholder="Write your note..."
+  />
+
+  {/* 😄 MEME BUTTONS */}
+  <div className="meme-buttons">
+    <button onClick={() => setNote(note + " 💪")}>💪</button>
+    <button onClick={() => setNote(note + " 😴")}>😴</button>
+    <button onClick={() => setNote(note + " 🔥")}>🔥</button>
+    <button onClick={() => setNote(note + " 😤")}>😤</button>
+    <button onClick={() => setNote(note + " 🥳")}>🥳</button>
+  </div>
+
+  {/* 📜 NOTES HISTORY */}
+  <div className="notes-list">
+    {(data[selectedDate]?.notes || []).map((n, i) => (
+      <div key={i} className="note-item">
+        <div className="note-text">{n.text}</div>
+        <div className="note-time">🕒 {n.time}</div>
+      </div>
+    ))}
+  </div>
+</div>
+<h3 className="calendar-title">
+  {new Date().toLocaleString("default", {
+    month: "long",
+    year: "numeric"
+  })}
+</h3>
+<div className="calendar">
+  {getMonthData().map((d) => (
+    <div
+      key={d.date}
+      className={`calendar-day ${d.done ? "done" : ""}`}
+    >
+      {d.date}
+    </div>
+  ))}
+</div>
+{(() => {
+  const insights = getInsights();
+
+  return (
+    <div className="insights">
+      <h3>📊 Insights</h3>
+      <p>Total habits: {insights.total}</p>
+      <p>Completed: {insights.completed}</p>
+      <p>Success rate: {insights.percent}%</p>
+    </div>
+  );
+})()}
 
           </div>
 
@@ -379,6 +570,7 @@ return (
         </div>
       </div>
     )}
+   
 
     {/* MEASUREMENTS */}
     {page === "measurements" && (
@@ -388,20 +580,28 @@ return (
     {/* POPUP */}
     {popup && (
       <div className="popup-overlay">
-        <div className="popup">
-          <h2>🏆 {popup.winner} Wins!</h2>
-
-          <div className="wheel"></div>
-
-          {!revealed ? (
-            <p className="spinning">🎡 Spinning...</p>
-          ) : (
-            <h3>{popup.punishment}</h3>
-          )}
-
-          <button onClick={() => setPopup(null)}>Close</button>
-        </div>
+      <div className="popup">
+    
+        <h2>🏆 {popup.winner} Wins! 🎉</h2>
+    
+        <p className="popup-sub">Good Job!</p>
+    
+        <div className="wheel"></div>
+    
+        {!revealed ? (
+          <p className="spinning">🎡 Spinning...</p>
+        ) : (
+          <>
+            <h3 className="loser-text">
+              😈 {popup.winner === "Hitendra" ? "Radhika" : "Hitendra"} do:
+            </h3>
+            <h2 className="punishment-text">{popup.punishment}</h2>
+          </>
+        )}
+    
+        <button onClick={() => setPopup(null)}>Close</button>
       </div>
+    </div>
     )}
 
   </div>

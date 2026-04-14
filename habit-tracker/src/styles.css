@@ -1,27 +1,26 @@
-/* RESET */
+/* 🌈 GLOBAL */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  background: #f5f7fb;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #fef6ff, #f0f9ff, #f0fdf4);
   color: #1f2937;
 }
 
-/* APP CONTAINER */
+/* APP */
 .app {
   max-width: 1200px;
   margin: auto;
-  padding: 16px;
+  padding: 20px;
 }
 
 /* NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 12px 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 12px 20px;
+  background: #ffffffcc;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
   margin-bottom: 20px;
 }
 
@@ -31,89 +30,56 @@ body {
   font-weight: 600;
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .navbar button:hover {
-  background: #eef2ff;
+  background: #e0f2fe;
 }
 
 /* DASHBOARD TABLE */
 .measure-table-container {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
-
-.measure-table {
-  width: 100%;
-  border-collapse: collapse;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
 }
 
 .measure-table th {
-  background: #eef2ff;
+  background: linear-gradient(90deg, #c7d2fe, #fbcfe8);
   padding: 12px;
-  font-weight: 600;
-  text-align: left;
 }
 
 .measure-table td {
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-}
-
-.measure-table tr:hover {
-  background: #f9fafb;
-  cursor: pointer;
+  padding: 10px;
 }
 
 .winner-row {
-  background: #ecfdf5 !important;
+  background: #dcfce7 !important;
 }
 
-/* HABIT TRACKER */
+/* HABIT */
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .top {
-  background: white;
+  background: #ffffff;
   padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border-radius: 16px;
 }
 
-.date-nav {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.date-nav button {
-  border: none;
-  background: #6366f1;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* MAIN GRID */
 .main {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 
 .left {
   flex: 2;
-  background: white;
+  background: #ffffff;
   padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border-radius: 16px;
 }
 
 .right {
@@ -125,78 +91,169 @@ body {
 
 /* HABIT ROW */
 .habit-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 150px 1fr;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
-
-.habit-row span {
-  width: 120px;
-  font-weight: 500;
-}
-
-/* WEEK BOXES */
-.week-boxes {
-  display: flex;
-  gap: 6px;
-}
-
 .date-label {
-  font-size: 12px;
-  color: #6b7280;
-  width: 28px;
+  width: 32px;
   text-align: center;
+  font-size: 12px;
+}
+.week-boxes {
+  display: grid;
+  grid-template-columns: repeat(7, 32px);
+  gap: 6px;
+  align-items: center;
 }
 
 .day-box {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  background: #e5e7eb;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
 }
 
 .day-box:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
-/* HABIT CARDS */
+/* CARDS */
 .habit-card {
-  background: white;
+  background: #ffffff;
   padding: 14px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.habit-card h4 {
-  margin: 0 0 8px;
-}
-
-.habit-card button {
-  background: #6366f1;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.habit-card button:hover {
-  background: #4f46e5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .active-card {
-  border: 2px solid #22c55e;
-  background: #ecfdf5;
+  background: linear-gradient(135deg, #bbf7d0, #a7f3d0);
 }
 
-.done {
-  color: #22c55e;
-  font-weight: 600;
+
+
+
+/* NOTES */
+.note-box {
+  margin-top: 20px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.note-box textarea {
+  width: 100%;
+  height: 80px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.note-box button {
+  margin-top: 10px;
+  background: #818cf8;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+/* CALENDAR */
+.calendar {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-day {
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  background: #f1f5f9;
+}
+
+.calendar-day.done {
+  background: #86efac;
+}
+
+/* INSIGHTS */
+.insights {
+  margin-top: 20px;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
 }
 
 /* POPUP */
+.popup {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+}
+/* 🔥 SCROLL CONTAINER */
+.table-container {
+  max-height: 450px;
+  overflow-y: auto;
+  border-radius: 16px;
+}
+
+/* TABLE */
+.measure-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 🔥 HEADER FIXED */
+.measure-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(90deg, #c7d2fe, #fbcfe8);
+  padding: 12px;
+}
+
+/* 🔥 TARGET ROW FIXED BELOW HEADER */
+.target-row {
+  position: sticky;
+  top: 50px; /* height of header */
+  background: #fef3c7;
+  z-index: 4;
+}
+
+/* CELLS */
+.measure-table td {
+  padding: 10px;
+  text-align: center;
+}
+
+/* INPUT */
+.measure-table input {
+  width: 70px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* 🎨 ROW COLORS */
+.measure-table tr:nth-child(even) {
+  background: #f0fdf4;
+}
+
+.measure-table tr:nth-child(odd) {
+  background: #fef9ff;
+}
+
+/* HOVER */
+.measure-table tr:hover {
+  background: #e0f2fe;
+}
+
+/* WEEK COLUMN */
+.week-label {
+  font-weight: 500;
+}
+/* OVERLAY */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -205,58 +262,111 @@ body {
   height: 100%;
   background: rgba(0,0,0,0.4);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 100;
 }
 
+/* POPUP CARD */
 .popup {
-  background: white;
-  padding: 24px;
-  border-radius: 16px;
+  background: rgb(227, 228, 191);
+  padding: 30px;
+  border-radius: 20px;
   text-align: center;
-  width: 300px;
-  animation: fadeIn 0.3s ease;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: scaleIn 0.3s ease;
 }
 
+/* TEXT */
+.popup-sub {
+  color: #6366f1;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+
+.loser-text {
+  margin-top: 15px;
+  color: #ef4444;
+}
+
+.punishment-text {
+  margin-top: 5px;
+  color: #111827;
+}
+
+/* BUTTON */
 .popup button {
-  margin-top: 16px;
-  padding: 8px 12px;
+  margin-top: 20px;
+  padding: 8px 14px;
+  border-radius: 10px;
   border: none;
   background: #6366f1;
   color: white;
+  cursor: pointer;
+}
+
+/* ANIMATION */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+} 
+/* timestamp */
+.note-time {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+/* meme buttons */
+.meme-buttons {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.meme-buttons button {
+  border: none;
+  background: #f3f4f6;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
 }
 
-.spinning {
+.meme-buttons button:hover {
+  background: #e0e7ff;
+}
+/* notes list */
+.notes-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* each note */
+.note-item {
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 10px;
+  border-left: 4px solid #6366f1;
+}
+
+/* text */
+.note-text {
+  font-size: 14px;
+}
+
+/* time */
+.note-time {
+  font-size: 11px;
   color: #6b7280;
-}
-
-/* ANIMATION */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .main {
-    flex-direction: column;
-  }
-
-  .habit-row span {
-    width: 90px;
-    font-size: 12px;
-  }
-
-  .day-box {
-    width: 24px;
-    height: 24px;
-  }
+  margin-top: 4px;
 }

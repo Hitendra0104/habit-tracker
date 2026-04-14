@@ -51,17 +51,11 @@ function Measurements({ user }) {
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem(
-      `measurements_${user}`,
-      JSON.stringify(data)
-    );
+    localStorage.setItem(`measurements_${user}`, JSON.stringify(data));
   }, [data, user]);
 
   useEffect(() => {
-    localStorage.setItem(
-      `targets_${user}`,
-      JSON.stringify(targets)
-    );
+    localStorage.setItem(`targets_${user}`, JSON.stringify(targets));
   }, [targets, user]);
 
   const handleChange = (weekKey, field, value) => {
@@ -79,7 +73,7 @@ function Measurements({ user }) {
     <div className="measure-table-container">
       <h2>📏 {user} Measurements</h2>
 
-      <div className="table-wrapper">
+      <div className="table-container">
         <table className="measure-table">
 
           <thead>
@@ -99,6 +93,7 @@ function Measurements({ user }) {
 
           <tbody>
 
+            {/* 🔥 TARGET ROW */}
             <tr className="target-row">
               <td>-</td>
               <td>Target</td>
