@@ -169,11 +169,24 @@ function App() {
       const d = new Date(weekKey);
       d.setDate(d.getDate() + i);
       const dayData = userData[getLocalDate(d)] || {};
-      // Use Object.values to avoid the loop-func warning
-      Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
+      const values = Object.values(dayData);
+      values.forEach(val => { if (val === true) weeklyTotal++; });
     }
     return weeklyTotal;
   };
+  /* const calculateScore = (userData, weekKey) => {
+    let weeklyTotal = 0;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekKey);
+      d.setDate(d.getDate() + i);
+      const dayData = userData[getLocalDate(d)] || {};
+      // Use Object.values to avoid the loop-func warning
+      // eslint-disable-next-line no-loop-func
+Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
+      /*Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
+    }
+    return weeklyTotal;
+  }; */
 
   const getWeeks = () => {
     let current = new Date("2026-04-13");
