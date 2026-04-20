@@ -3,7 +3,7 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
   background: radial-gradient(circle at top, #1e293b, #020617);
-  color: #e2e8f0;
+  color: #021a3b;
 }
 
 /* APP */
@@ -198,7 +198,20 @@ body {
     rgba(34,197,94,0.3)
   );
 }
+/* 🏆 LOGIN/PROFILE PAGE FIX */
+.popup h2, 
+.profile-selection h2,
+.login-container h2 {
+  color: #1e1b4b !important; /* Deep dark indigo for visibility */
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 0 1px 2px rgba(108, 161, 34, 0.1);
+}
 
+/* If the title is specifically "Couple Fitness" in a header tag */
+h2 {
+    color: #4338ca; /* Indigo-700 */
+}
 /* ✅ BUTTON */
 button {
   margin-top: 8px;
@@ -704,3 +717,139 @@ body {
   background: linear-gradient(45deg, transparent, rgba(147, 197, 253, 0.2), transparent);
   pointer-events: none;
 }
+
+/* 📸 FUNKY PHOTO VAULT */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 40px 0;
+}
+
+.funky-frame {
+  position: relative;
+  background: white;
+  padding: 12px 12px 40px 12px; /* Polaroid style bottom */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 
+              0 0 15px rgba(99, 102, 241, 0.4); /* Neon glow */
+  transition: all 0.3s ease;
+  transform: rotate(var(--rotation, -2deg));
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 40px 10px;
+}
+
+.funky-frame {
+  background: white;
+  padding: 10px 10px 35px 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4), 0 0 10px rgba(99, 102, 241, 0.3);
+  transform: rotate(var(--r, -2deg));
+  transition: 0.3s;
+}
+
+.funky-frame:nth-child(even) { --r: 3deg; }
+
+.funky-frame:hover {
+  transform: rotate(0deg) scale(1.05);
+  z-index: 5;
+}
+
+.funky-frame img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.photo-info {
+  display: flex;
+  justify-content: space-between;
+  color: #1e293b;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.delete-btn {
+  background: none; border: none; cursor: pointer; font-size: 16px;
+}
+
+/* 📸 PHOTO VAULT UI */
+.vault-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.upload-label {
+  background: linear-gradient(135deg, #6366f1, #22c55e);
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.upload-label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 40px;
+  padding-bottom: 100px; /* Space for navbar */
+}
+
+/* POLAROID STYLE */
+.funky-frame {
+  background: #f8fafc;
+  padding: 12px 12px 35px 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: rotate(var(--r, -2deg));
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.funky-frame:nth-child(even) { --r: 3deg; }
+.funky-frame:nth-child(3n) { --r: -1.5deg; }
+
+.funky-frame:hover {
+  transform: rotate(0deg) scale(1.1);
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.funky-frame img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.photo-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  color: #1e293b;
+}
+
+.user-tag {
+  font-weight: 700;
+  font-family: 'Permanent Marker', cursive; /* Optional: adds a handwritten feel */
+  font-size: 14px;
+}
+
+.photo-delete {
+  background: transparent !important;
+  color: #ef4444 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 18px;
+  box-shadow: none !important;
+}
+

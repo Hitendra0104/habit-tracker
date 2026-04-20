@@ -163,19 +163,23 @@ function App() {
   const formatDate = (d) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit" });
   const formatFullDate = (d) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-  const calculateScore = (userData, weekKey) => {
-    const weekDates = getWeek(weekKey);
-    let total = 0;
+// App.js - around line 173
+const calculateScore = (userData, weekKey) => {
+  const weekDates = getWeek(weekKey);
+  let total = 0;
 
-    // We use a standard for-loop here to be 100% safe for Vercel's ESLint rules
-    for (let i = 0; i < weekDates.length; i++) {
-      const dateStr = weekDates[i];
-      const dayData = userData[dateStr] || {};
-      const completedTasks = Object.values(dayData).filter(val => val === true).length;
-      total += completedTasks;
-    }
-    return total;
-  };
+  // Using a standard for-loop avoids the 'unsafe references' warning
+  for (let i = 0; i < weekDates.length; i++) {
+    const dateStr = weekDates[i];
+    const dayData = userData[dateStr] || {};
+    
+    // Calculate logic directly in the loop to avoid warnings
+    const completedTasks = Object.values(dayData).filter(val => val === true).length;
+    total += completedTasks;
+  }
+  
+  return total;
+};
   /* const calculateScore = (userData, weekKey) => {
     let weeklyTotal = 0;
     for (let i = 0; i < 7; i++) {
@@ -257,8 +261,9 @@ Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
       <button onClick={() => setPage("habit")}>Habit Tracker</button>
       <button onClick={() => setPage("measurements")}>Measurements</button>
       <button onClick={() => setPage("diet")}>Diet</button>
-      <button onClick={logout}>Logout</button>
       <button onClick={() => setPage("photos")}>Photos</button>
+      <button onClick={logout}>Logout</button>
+      
     </div>
   );
 
