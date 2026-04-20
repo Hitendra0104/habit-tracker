@@ -58,26 +58,6 @@ function App() {
     dateRef.current = selectedDate;
   }, [data, selectedDate]);
 
-<<<<<<< HEAD
-  /* Firestore sync for both users (initial load) */
-  useEffect(() => {
-    const unsub1 = onSnapshot(doc(db, "habits", "Hitendra"), (snap) => {
-      setHitendraData(snap.exists() ? snap.data() : {});
-    });
-  
-    const unsub2 = onSnapshot(doc(db, "habits", "Radhika"), (snap) => {
-      setRadhikaData(snap.exists() ? snap.data() : {});
-    });
-  
-    return () => {
-      unsub1();
-      unsub2();
-    };
-  }, []);
-  
-  /* LOAD USER */
-=======
->>>>>>> dev
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(savedUser);
@@ -87,10 +67,7 @@ function App() {
     setOtherData({});
   }, [user]);
 
-  useEffect(() => {
-    setData({});
-    setOtherData({});
-  }, [user]);
+
 
   const otherUser = user === "Radhika" ? "Hitendra" : "Radhika";
 
@@ -295,91 +272,6 @@ Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
 
   if (!user) return <Login setUser={setUser} />;
 
-<<<<<<< HEAD
-
-
-  // ✅ FIX UNUSED VARIABLES (no logic change)
-  console.log(
-    habitsList,
-    Measurements,
-    thisWeek,
-    toggleHabit,
-    changeDate,
-    formatDate,
-    formatFullDate
-  );
-
-return (
-  <div className="app">
-
-    <Navbar />
-
-    {/* DASHBOARD */}
-    {page === "dashboard" && (
-      <div className="measure-table-container">
-        <h2>🏆 Weekly Competition</h2>
-
-        <table className="measure-table">
-          <thead>
-            <tr>
-              <th>Sr</th>
-              <th>Week</th>
-              <th>Hitendra</th>
-              <th>Radhika</th>
-              <th>Winner</th>
-              <th>Punishment</th>
-            </tr>
-          </thead>
-          <tbody>
-            {weeks.map((w) => {
-              const hScore = calculateScore(hitendraData, w.key);
-              const rScore = calculateScore(radhikaData, w.key);
-
-              const winner = getWinner(hScore, rScore);
-              const punishment = getPunishment(w.key);
-
-              return (
-                <tr
-                  key={w.key}
-                  className={winner === user ? "winner-row" : ""}
-                  onClick={() => {
-                    setRevealed(false);
-                    setPopup({ winner, punishment });
-                    setTimeout(() => setRevealed(true), 1500);
-                  }}
-                >
-                  <td>{w.sr}</td>
-                  <td>{w.label}</td>
-                  <td>{hScore}</td>
-                  <td>{rScore}</td>
-                  <td>{winner}</td>
-                  <td>🎡 Tap</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    )}
-
-    {/* HABIT TRACKER */}
-    {page === "habit" && (
-      <div className="dashboard">
-
-        <div className="top">
-          <h2>{user}</h2>
-
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
-
-          <div className="date-nav">
-            <button onClick={() => changeDate(-1)}>⬅️</button>
-            <span>{formatFullDate(selectedDate)}</span>
-            <button onClick={() => changeDate(1)}>➡️</button>
-=======
   return (
     <div className="app">
       <Navbar />
@@ -397,7 +289,6 @@ return (
               <p>⚡ {getXP(otherData)} XP | 🏆 Lvl {getLevel(getXP(otherData))}</p>
               <button onClick={sendNudge} style={{ fontSize: '12px', marginTop: '5px' }}>🗯️ Nudge</button>
             </div>
->>>>>>> dev
           </div>
 
           {data.incomingNudge && (
