@@ -165,14 +165,16 @@ function App() {
 
   const calculateScore = (userData, weekKey) => {
     const weekDates = getWeek(weekKey);
-    
-    // Using .reduce is the "safe" way to accumulate totals in React
-    return weekDates.reduce((weeklyTotal, dateStr) => {
+    let total = 0;
+
+    // We use a standard for-loop here to be 100% safe for Vercel's ESLint rules
+    for (let i = 0; i < weekDates.length; i++) {
+      const dateStr = weekDates[i];
       const dayData = userData[dateStr] || {};
-      const dayCount = Object.values(dayData).filter(val => val === true).length;
-      return weeklyTotal + dayCount;
-    }, 0);
-  }; weeklyTotal;
+      const completedTasks = Object.values(dayData).filter(val => val === true).length;
+      total += completedTasks;
+    }
+    return total;
   };
   /* const calculateScore = (userData, weekKey) => {
     let weeklyTotal = 0;
