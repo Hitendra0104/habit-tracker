@@ -39,8 +39,8 @@ const punishments = [
 ];
 
 function App() {
-  const [hitendraData, setHitendraData] = useState({});
-  const [radhikaData, setRadhikaData] = useState({});
+  //const [hitendraData, setHitendraData] = useState({});
+  //const [radhikaData, setRadhikaData] = useState({});
   const [user, setUser] = useState(null);
   const [page, setPage] = useState("dashboard");
   const [popup, setPopup] = useState(null);
