@@ -9,7 +9,7 @@ function Login({ setUser }) {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.title}>🏆 Couple Fitness</h1>
+        <h1 style={styles.title}>Couple Fitness</h1>
         <p style={styles.subtitle}>Choose your profile</p>
 
         <div style={styles.buttonGroup}>
@@ -43,6 +43,7 @@ const styles = {
 
   card: {
     background: "#ffffff",
+    fontcolor: "black",
     padding: "40px",
     borderRadius: "20px",
     textAlign: "center",
@@ -51,8 +52,9 @@ const styles = {
   },
 
   title: {
+    color: "black", 
     margin: 0,
-    fontSize: "24px",
+    fontSize: "24px"
   },
 
   subtitle: {

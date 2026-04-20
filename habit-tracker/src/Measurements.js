@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { db } from "./firebase";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
 const fields = [
   "weight",
@@ -33,7 +35,6 @@ function getWeekRanges() {
 
     current.setDate(current.getDate() + 7);
   }
-
   return weeks;
 }
 
@@ -43,45 +44,42 @@ function Measurements({ user }) {
   const [targets, setTargets] = useState({});
 
   useEffect(() => {
-    const saved = localStorage.getItem(`measurements_${user}`);
-    const savedTargets = localStorage.getItem(`targets_${user}`);
-
-    if (saved) setData(JSON.parse(saved));
-    if (savedTargets) setTargets(JSON.parse(savedTargets));
+    const unsub = onSnapshot(doc(db, "measurements", user), (docSnap) => {
+      if (docSnap.exists()) {
+        setData(docSnap.data().weeks || {});
+        setTargets(docSnap.data().targets || {});
+      }
+    });
+    return () => unsub();
   }, [user]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `measurements_${user}`,
-      JSON.stringify(data)
-    );
-  }, [data, user]);
+  const handleChange = async (weekKey, field, value) => {
+    const updatedWeeks = {
+      ...data,
+      [weekKey]: { ...(data[weekKey] || {}), [field]: value }
+    };
+    setData(updatedWeeks);
 
-  useEffect(() => {
-    localStorage.setItem(
-      `targets_${user}`,
-      JSON.stringify(targets)
-    );
-  }, [targets, user]);
-
-  const handleChange = (weekKey, field, value) => {
-    const updated = { ...data };
-    if (!updated[weekKey]) updated[weekKey] = {};
-    updated[weekKey][field] = value;
-    setData(updated);
+    await setDoc(doc(db, "measurements", user), {
+      weeks: updatedWeeks,
+      targets: targets
+    }, { merge: true });
   };
 
-  const handleTargetChange = (field, value) => {
-    setTargets({ ...targets, [field]: value });
+  const handleTargetChange = async (field, value) => {
+    const updatedTargets = { ...targets, [field]: value };
+    setTargets(updatedTargets);
+
+    await setDoc(doc(db, "measurements", user), {
+      targets: updatedTargets
+    }, { merge: true });
   };
 
   return (
     <div className="measure-table-container">
-      <h2>📏 {user} Measurements</h2>
-
-      <div className="table-wrapper">
+      <h2>📏 {user}'s Measurements</h2>
+      <div className="table-container">
         <table className="measure-table">
-
           <thead>
             <tr>
               <th>Sr</th>
@@ -96,47 +94,33 @@ function Measurements({ user }) {
               <th>Chest</th>
             </tr>
           </thead>
-
           <tbody>
-
             <tr className="target-row">
               <td>-</td>
               <td>Target</td>
-
               {fields.map((field, i) => (
                 <td key={i}>
                   <input
                     value={targets[field] || ""}
-                    onChange={(e) =>
-                      handleTargetChange(field, e.target.value)
-                    }
+                    onChange={(e) => handleTargetChange(field, e.target.value)}
                   />
                 </td>
               ))}
             </tr>
-
             {weeks.map((week, i) => (
               <tr key={i}>
                 <td>{week.sr}</td>
                 <td className="week-label">{week.label}</td>
-
                 {fields.map((field, idx) => (
                   <td key={idx}>
                     <input
                       value={data[week.key]?.[field] || ""}
-                      onChange={(e) =>
-                        handleChange(
-                          week.key,
-                          field,
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleChange(week.key, field, e.target.value)}
                     />
                   </td>
                 ))}
               </tr>
             ))}
-
           </tbody>
         </table>
       </div>
