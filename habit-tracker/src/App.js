@@ -164,15 +164,15 @@ function App() {
   const formatFullDate = (d) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
   const calculateScore = (userData, weekKey) => {
-    let weeklyTotal = 0;
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(weekKey);
-      d.setDate(d.getDate() + i);
-      const dayData = userData[getLocalDate(d)] || {};
-      const values = Object.values(dayData);
-      values.forEach(val => { if (val === true) weeklyTotal++; });
-    }
-    return weeklyTotal;
+    const weekDates = getWeek(weekKey);
+    
+    // Using .reduce is the "safe" way to accumulate totals in React
+    return weekDates.reduce((weeklyTotal, dateStr) => {
+      const dayData = userData[dateStr] || {};
+      const dayCount = Object.values(dayData).filter(val => val === true).length;
+      return weeklyTotal + dayCount;
+    }, 0);
+  }; weeklyTotal;
   };
   /* const calculateScore = (userData, weekKey) => {
     let weeklyTotal = 0;
