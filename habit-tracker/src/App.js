@@ -278,18 +278,56 @@ Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
 
       {page === "dashboard" && (
         <div className="measure-table-container">
-          <div className="battle-header" style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', marginBottom: '30px', padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px' }}>
-            <div className={`player-card ${getXP(data) >= getXP(otherData) ? 'winner-glow' : 'loser-ice'}`}>
-              <h3>{user} (You)</h3>
-              <p>⚡ {getXP(data)} XP | 🏆 Lvl {getLevel(getXP(data))}</p>
-            </div>
-            <div className="vs-circle" style={{ fontSize: '24px', fontWeight: 'bold', color: '#6366f1' }}>VS</div>
-            <div className={`player-card ${getXP(otherData) > getXP(data) ? 'winner-glow' : 'loser-ice'}`}>
-              <h3>{otherUser}</h3>
-              <p>⚡ {getXP(otherData)} XP | 🏆 Lvl {getLevel(getXP(otherData))}</p>
-              <button onClick={sendNudge} style={{ fontSize: '12px', marginTop: '5px' }}>🗯️ Nudge</button>
-            </div>
-          </div>
+        
+        {page === "dashboard" && (
+  <div className="measure-table-container">
+
+    <div className="battle-header">
+      <div className="vs-row">
+        <div className={`player-card ${getXP(data) >= getXP(otherData) ? 'winner-glow' : 'loser-ice'}`}>
+          <h3>{user} (You)</h3>
+          <p>⚡ {getXP(data)} XP | 🏆 Lvl {getLevel(getXP(data))}</p>
+        </div>
+        <div className="vs-circle">VS</div>
+        <div className={`player-card ${getXP(otherData) > getXP(data) ? 'winner-glow' : 'loser-ice'}`}>
+          <h3>{otherUser}</h3>
+          <p>⚡ {getXP(otherData)} XP | 🏆 Lvl {getLevel(getXP(otherData))}</p>
+          <button onClick={sendNudge}>🗯️ Nudge</button>
+        </div>
+      </div>
+    </div>
+
+    {data.incomingNudge && (
+      <div className="nudge-toast" onClick={clearNudge}>
+        {data.incomingNudge} <span style={{fontSize:'10px', opacity: 0.7}}>(Click to dismiss)</span>
+      </div>
+    )}
+
+    <h2>🏆 Weekly Competition</h2>
+    <table className="measure-table">
+      <thead>
+        <tr><th>Sr</th><th>Week</th><th>Hitendra</th><th>Radhika</th><th>Winner</th><th>Punishment</th></tr>
+      </thead>
+      <tbody>
+        {getWeeks().map((w) => {
+          const hScore = calculateScore(otherData, w.key);
+          const rScore = calculateScore(data, w.key);
+          const winner = getWinner(hScore, rScore);
+          return (
+            <tr key={w.key} className={winner === user ? "winner-row" : ""} onClick={() => {
+              setRevealed(false);
+              setPopup({ winner, punishment: getPunishment(w.key) });
+              setTimeout(() => setRevealed(true), 1500);
+            }}>
+              <td>{w.sr}</td><td>{w.label}</td><td>{hScore}</td><td>{rScore}</td><td>{winner}</td><td>🎡 Tap</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+
+  </div>
+)}
 
           {data.incomingNudge && (
             <div className="nudge-toast" onClick={clearNudge}>

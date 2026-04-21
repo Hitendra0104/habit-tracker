@@ -9,7 +9,7 @@ function Login({ setUser }) {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.title}>Couple Fitness</h1>
+        <h1   style={styles.title}>Couple Fitness</h1>
         <p style={styles.subtitle}>Choose your profile</p>
 
         <div style={styles.buttonGroup}>
