@@ -42,7 +42,7 @@ const PLANS = {
 };
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const FULL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 
 const getLocalDate = (date) => {
   const d = new Date(date);
@@ -70,7 +70,7 @@ export default function Workout({ user, otherUser }) {
   const [tab, setTab] = useState("schedule"); // schedule | log | compete
   const [myData, setMyData] = useState({});
   const [theirData, setTheirData] = useState({});
-  const [selectedDay, setSelectedDay] = useState(0); // 0=Mon … 6=Sun
+
   const [logDate, setLogDate] = useState(getTodayKey());
   const [customExercise, setCustomExercise] = useState({ name: "", sets: "", reps: "", weight: "", unit: "kg" });
   const [showPlanPicker, setShowPlanPicker] = useState(false);
