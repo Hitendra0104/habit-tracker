@@ -7,6 +7,8 @@ import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState, useRef } from "react";
 import PhotoVault from "./PhotoVault";
 import Workout from "./Workout";
+import Nutrition from "./Nutrition";
+import Health from "./Health";
 
 // --- HELPERS MOVED TO TOP SCOPE ---
 const getLocalDate = (date) => {
@@ -267,6 +269,8 @@ Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
       <button onClick={() => setPage("diet")}>Diet</button>
       <button onClick={() => setPage("photos")}>Photos</button>
       <button onClick={() => setPage("workout")}>Workout</button>
+      <button onClick={() => setPage("nutrition")}>Nutrition</button>
+      <button onClick={() => setPage("health")}>Health</button>
       <button onClick={logout}>Logout</button>
       
     </div>
@@ -498,6 +502,9 @@ Object.values(dayData).forEach(val => { if (val === true) weeklyTotal++; });
 
 {page === "photos" && <PhotoVault user={user} otherUser={otherUser} />}
 {page === "workout" && <Workout user={user} otherUser={otherUser} />}
+{page === "nutrition" && <Nutrition user={user} otherUser={otherUser} />}
+{page === "health" && <Health user={user} otherUser={otherUser} />}
+
       {popup && (
         <div className="popup-overlay">
           <div className="popup">
